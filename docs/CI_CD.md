@@ -6,7 +6,7 @@ Every third-party action is pinned to a full commit SHA with the version in a co
 
 | File | Trigger | What it does |
 |---|---|---|
-| `ci.yml` | push to `main`, every PR | `verify` job: commitlint (PRs), `format:check`, `lint`, `typecheck`, `check:deps`, `check:dupes`, `check:unused`, `check:no-deps`, `check:fixtures`. `test` job: `test:coverage` on Node 20, 22, 24; uploads coverage to Codecov from Node 24. `package` job: `build`, `publint`, `attw --pack`, `size-limit`, ESM and CJS import smoke tests. |
+| `ci.yml` | push to `main`, every PR | `verify` job: commitlint (PRs), `format:check`, `lint`, `typecheck`, `check:deps`, `check:dupes`, `check:unused`, `check:no-deps`, `check:fixtures`. `test` job: `test:coverage` on Node 22 and 24; uploads coverage to Codecov from Node 24. `package` job: `build`, `publint`, `attw --pack`, `size-limit`, ESM and CJS import smoke tests. |
 | `codeql.yml` | PR, push, weekly | CodeQL for JavaScript/TypeScript (`security-and-quality`). |
 | `security.yml` | PR, push | gitleaks over the full history; `actions/dependency-review-action` on PRs (fails on high-severity advisories or non-permissive licences). |
 | `scorecard.yml` | weekly, push to `main` | OpenSSF Scorecard; results to code scanning and the README badge. |
@@ -17,7 +17,7 @@ Every third-party action is pinned to a full commit SHA with the version in a co
 
 ## Gates on `main`
 
-`main` accepts only pull requests, admins included. Required checks: `verify`, `test (20)`, `test (22)`, `test (24)`, `package`, `analyze` (CodeQL) and `gitleaks`. Squash merges only, with linear history; branches are deleted on merge.
+`main` accepts only pull requests, admins included. Required checks: `verify`, `test (22)`, `test (24)`, `package`, `analyze` (CodeQL) and `gitleaks`. Squash merges only, with linear history; branches are deleted on merge.
 
 ## Local gate
 

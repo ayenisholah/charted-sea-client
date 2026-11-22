@@ -21,6 +21,6 @@ Each requirement has a test. The ID goes in the test name, so `grep FR-3` finds 
 - **NFR-3 Bounded retries.** Idempotent calls retry at most `maxAttempts` times, never wait longer than `maxDelayMs` per attempt, and respect `Retry-After`.
 - **NFR-4 Zero runtime dependencies.** `dependencies` in `package.json` is empty (checked in CI).
 - **NFR-5 Size.** Minified + gzipped ESM bundle ≤ 8 KB (size-limit).
-- **NFR-6 Compatibility.** Tests pass on Node 20, 22 and 24. Package types resolve correctly for ESM, CJS and bundlers (`@arethetypeswrong/cli`).
+- **NFR-6 Compatibility.** Tests pass on Node 22 and 24 (Node 20 reached end of life in April 2026 and was dropped in 0.3.0). Package types resolve correctly for ESM, CJS and bundlers (`@arethetypeswrong/cli`).
 - **NFR-7 Forward compatibility.** Unknown statuses and fields never cause a throw.
 - **NFR-8 Quality.** 100% line, branch, function and statement coverage per file.

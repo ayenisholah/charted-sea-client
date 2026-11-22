@@ -9,7 +9,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   sourcemap: true,
-  target: "node20",
+  target: "node22",
   treeshake: true,
   define: { __VERSION__: JSON.stringify(version) },
 });
