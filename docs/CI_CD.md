@@ -10,7 +10,7 @@ Planned workflows. Every third-party action is pinned to a full commit SHA with 
 | `codeql.yml` | PR, push, weekly | CodeQL for JavaScript/TypeScript (`security-and-quality`). |
 | `security.yml` | PR, push | gitleaks over the full history; `actions/dependency-review-action` on PRs (fails on high-severity advisories or non-permissive licences). |
 | `scorecard.yml` | weekly, push to `main` | OpenSSF Scorecard; results to code scanning and the README badge. |
-| `release.yml` | push to `main` | `changesets/action`: opens or updates the "Version packages" PR; on merge, `npm publish --provenance --access public` with `id-token: write`, then a GitHub release with the changelog. |
+| `release.yml` | push to `main` | If `package.json` holds a version not yet on npm (merged from a `release/X.Y.Z` PR), `npm publish --provenance --access public` via trusted publishing (`id-token: write`, environment `npm`), then tag and GitHub release from the changelog. Otherwise a no-op. |
 | `docs.yml` | push to `main` | TypeDoc → GitHub Pages. |
 | `live-smoke.yml` | `workflow_dispatch` only | Live smoke test with the `CHARTED_SEA_TOKEN` secret in a protected `live` environment (manual approval). |
 | `mutation.yml` | weekly | Stryker; report as an artifact, not a gate (M2). |
