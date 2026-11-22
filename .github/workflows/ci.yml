@@ -35,6 +35,7 @@ jobs:
       - run: npm run check:dupes
       - run: npm run check:unused
       - run: npm run check:no-deps
+      - run: npm run check:fixtures
 
   test:
     runs-on: ubuntu-latest

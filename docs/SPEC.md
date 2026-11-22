@@ -58,7 +58,7 @@ All paths are relative to `baseUrl` and send `Authorization: Bearer <token>`.
 | `SUCCESS` | yes | yes | return |
 | `BLOCKED_TOO_MANY_TIMES`, `ERROR_TOO_MANY_TIMES` | yes | no | return (data, not an exception) |
 | `CANCELLED` | yes | no | return |
-| `REPLACED` | yes, for this task | — | return with `replaced: true`; derived tasks not followed until open question 4 is answered |
+| `REPLACED` | yes, for this task | — | return (check `status === "REPLACED"`); derived tasks not followed until open question 4 is answered |
 | anything else | treated as non-terminal | — | keep polling, log once at debug (forward compatibility) |
 
 ## Polling
@@ -82,10 +82,19 @@ Transport and API faults throw; task outcomes never do ([ADR 0003](adr/0003-erro
 | `ValidationError` | 400 / 422, or a local check fails (e.g. 8-day health range) |
 | `RateLimitError` | 429; exposes `retryAfterMs` |
 | `ServerError` | 5xx |
-| `NetworkError`, `TimeoutError`, `AbortError` | transport |
+| `ResponseError` | any other unexpected status, or a body that isn't JSON or isn't the documented shape |
+| `NetworkError`, `TimeoutError`, `AbortError` | transport; `NetworkError` and `TimeoutError` carry `maybeSubmitted` (true for `run`, `runSingle`, `cancel`, `proxies.update`) |
 | `WaitTimeoutError`, `TaskNotFoundError` | polling |
 
-All extend `ChartedSeaError` with `status?`, `requestId?`, `endpoint` and a redacted `cause`. Messages never contain the token or proxy credentials.
+All extend `ChartedSeaError` with `status?`, `requestId?`, `endpoint`, `details?` (the parsed, redacted error body) and a redacted `cause`. Messages never contain the token or proxy credentials.
+
+### Local checks and edge cases (decided during M1)
+
+- `run` rejects an empty `requests` array; `cancel` rejects a call with neither `uuids` nor `countries` (so a typo can't cancel everything); `scraperParams` may not set `requests`, `cacheMaxAgeInSec`, `url`, `method` or `payload`. All throw `ValidationError` before any request.
+- `read` with `uuids` sets `limit` to the batch size unless the caller passes one (the API's default of 20 would silently truncate). With more than 100 UUIDs, `limit`/`offset` are rejected. Duplicate UUIDs are requested once.
+- Reads by UUID only find tasks inside the API's default `minPendingAt` window (7 days); pass `minPendingAt` for older tasks.
+- A `Retry-After` longer than `retry.maxDelayMs` is not waited out: the `RateLimitError` is thrown with `retryAfterMs` so the caller decides.
+- Retried statuses: 408, 425, 429, 500, 502, 503, 504 (idempotent calls only).
 
 ## Open questions
 

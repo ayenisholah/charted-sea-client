@@ -11,5 +11,9 @@ for (const [format, mod] of [
 ]) {
   assert.equal(typeof mod.redact, "function", `${format}: redact export`);
   assert.equal(mod.redact("http://u:p@h"), "http://***@h", `${format}: redact works`);
+  assert.equal(typeof mod.createClient, "function", `${format}: createClient export`);
+  const client = mod.createClient({ token: "cs_test_000" });
+  assert.equal(typeof client.tasks.waitForResults, "function", `${format}: tasks wired`);
+  assert.throws(() => mod.createClient({ token: "" }), mod.ConfigError, `${format}: ConfigError`);
 }
 console.log("ESM and CJS imports OK");
