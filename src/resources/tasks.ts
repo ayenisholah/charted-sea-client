@@ -1,4 +1,11 @@
-import { decodeAs, decodeCancel, decodeCounts, decodeTask, decodeTasks } from "../decode.js";
+import {
+  decodeAs,
+  decodeCancel,
+  decodeCounts,
+  decodeTask,
+  decodeTaskPage,
+  decodeTasks,
+} from "../decode.js";
 import { ValidationError } from "../errors.js";
 import type { QueryValue, Transport } from "../http/transport.js";
 import { chunk, orderBy, unique } from "../polling/batch.js";
@@ -16,6 +23,7 @@ import type {
 export const UUID_BATCH_SIZE = 100;
 
 const SYNC_TIMEOUT_MARGIN_MS = 30_000;
+const DEFAULT_PAGE_SIZE = 20;
 const DEFAULT_AUTO_CANCEL_SEC = 600;
 const RESERVED_BODY_KEYS = new Set(["requests", "cacheMaxAgeInSec", "url", "method", "payload"]);
 
@@ -77,6 +85,15 @@ export interface TasksResource {
   runSingle(scraper: Scraper, request: TaskRequest, options?: RunOptions): Promise<Task>;
   /** Read tasks by UUID, URL or time range. */
   read(scraper: Scraper, query?: ReadQuery): Promise<Task[]>;
+  /**
+   * Iterates every task matching `query` across pages (`offset` advances by `limit`, default 20),
+   * stopping at the first short page. A task seen twice while pages shift is yielded once. Offset
+   * paging can't see tasks that move between pages while iterating; pin `maxPendingAt` for a stable set.
+   */
+  iterate(
+    scraper: Scraper,
+    query?: Omit<ReadQuery, "uuids">,
+  ): AsyncGenerator<Task, void, undefined>;
   /** Count tasks by status and country. */
   count(scraper: Scraper, query?: CountQuery): Promise<TaskCount[]>;
   /** Cancel tasks (and their sub-tasks) by UUID and/or country. Never retried automatically. */
@@ -129,7 +146,7 @@ export function createTasks(transport: Transport, timeoutMs: number): TasksResou
           ...fieldQuery(query),
         },
       },
-      decodeAs(decodeTasks, `GET ${path}`),
+      decodeAs(decodeTaskPage, `GET ${path}`),
     );
   }
 
@@ -187,6 +204,23 @@ export function createTasks(transport: Transport, timeoutMs: number): TasksResou
         pages.push(await readBatch(scraper, query, batch));
       }
       return orderBy(uuids, pages.flat(), (t) => t.uuid).ordered;
+    },
+
+    async *iterate(scraper, query = {}) {
+      const limit = query.limit ?? DEFAULT_PAGE_SIZE;
+      if (!Number.isInteger(limit) || limit < 1) throw new ValidationError("limit must be ≥ 1");
+      const seen = new Set<string>();
+      for (let offset = query.offset ?? 0; ; offset += limit) {
+        const page = await readBatch(scraper, { ...query, limit, offset });
+        for (const task of page) {
+          if (task.uuid !== undefined) {
+            if (seen.has(task.uuid)) continue;
+            seen.add(task.uuid);
+          }
+          yield task;
+        }
+        if (page.length < limit) return;
+      }
     },
 
     async count(scraper, query = {}) {

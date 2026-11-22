@@ -94,6 +94,16 @@ describe("tasks contract (API reference examples)", () => {
     expect(cancelled.uuids).toHaveLength(5);
   });
 
+  it("FR-1: read accepts the page object the live API returns", async () => {
+    serveFixture("read-tasks-live");
+    const { client } = testClient();
+    const [task] = await client.tasks.read("shopee", {
+      uuids: ["27eb6795-7e90-4928-9f13-cbb753f4563c"],
+      limit: 1,
+    });
+    expect(task).toMatchObject({ status: "BLOCKED", responseBody: "..." });
+  });
+
   it("FR-5: splits more than 100 UUIDs into batches, requests each once, merges in input order", async () => {
     const uuids = Array.from(
       { length: 250 },
