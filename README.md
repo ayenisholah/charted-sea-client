@@ -3,7 +3,7 @@
 Typed TypeScript client for the [Charted Sea](https://chartedsea.com) scraping API. Submit scraping tasks, wait for results with polling and backoff, read health metrics, and validate proxies, in Node, Bun, Deno or any runtime with `fetch`.
 
 > **Unofficial.** Not affiliated with or endorsed by Charted Sea.
-> **Status: 0.1.0.** The tasks API (run, read, count, cancel, waitForResults) is released. Health metrics, proxies and `tasks.iterate` are planned for 0.2.0; see the [roadmap](docs/ROADMAP.md).
+> **Status: 0.x.** Every documented endpoint has a typed method. Before 1.0, minor versions may change the API; see the [roadmap](docs/ROADMAP.md) and [changelog](CHANGELOG.md).
 
 [![CI](https://github.com/ayenisholah/charted-sea-client/actions/workflows/ci.yml/badge.svg)](https://github.com/ayenisholah/charted-sea-client/actions/workflows/ci.yml) [![npm](https://img.shields.io/npm/v/charted-sea-client)](https://www.npmjs.com/package/charted-sea-client) [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ayenisholah/charted-sea-client/badge)](https://scorecard.dev/viewer/?uri=github.com/ayenisholah/charted-sea-client)
 
@@ -42,7 +42,7 @@ for (const task of results) {
 }
 ```
 
-Check platform health before a large batch (planned for 0.2.0):
+Check platform health before a large batch:
 
 ```ts
 const health = await cs.health.taskMetrics({
@@ -52,6 +52,19 @@ const health = await cs.health.taskMetrics({
   countries: ["SG", "ID"],
 });
 ```
+
+Check a proxy URL template locally, then against the scrapers:
+
+```ts
+const check = cs.proxyUrl.check("socks5://user:pass@gw.example.com:${rand(range=[10000,19999])}");
+if (!check.ok) console.error(`offset ${check.offset}: ${check.reason}`);
+
+const [result] = await cs.proxies.validate([url]); // uses a little proxy traffic
+```
+
+## Examples
+
+[`examples/`](examples/): search pages to CSV, a health-gated batch, and cancel-by-country with a dry run. Run one with `npm run example -- examples/health-gated-batch.ts`.
 
 ## Documentation
 

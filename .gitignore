@@ -8,3 +8,5 @@ target/
 *.log
 .DS_Store
 docs-site/
+reports/
+.stryker-tmp/

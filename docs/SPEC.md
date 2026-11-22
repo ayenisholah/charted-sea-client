@@ -30,8 +30,8 @@ All paths are relative to `baseUrl` and send `Authorization: Bearer <token>`.
 |---|---|---|
 | `tasks.run(scraper, requests, opts?)` | `POST /scraping-tasks/{scraper}/run` | `waitForCompletion=false` by default ([ADR 0001](adr/0001-async-by-default.md)). `opts`: `wait`, `autoCancelAfterSec`, `includeAllFields`, `includeFields`, `cacheMaxAgeInSec`, `scraperParams` (e.g. `productSearch_crawlNextPages`). Never auto-retried ([ADR 0004](adr/0004-retry-policy.md)). |
 | `tasks.runSingle(scraper, request, opts?)` | `POST /scraping-tasks/{scraper}/run-single` | Same options; body fields at top level. |
-| `tasks.read(scraper, query)` | `GET /scraping-tasks/{scraper}` | `limit`, `offset`, `uuids`, `urls`, `minPendingAt`, `maxPendingAt`, field selection. `uuids` split into batches of 100 (open question 6) and merged in input order. |
-| `tasks.iterate(scraper, query)` | `GET /scraping-tasks/{scraper}` (paged) | Async iterator; advances `offset` by `limit` until a short page. |
+| `tasks.read(scraper, query)` | `GET /scraping-tasks/{scraper}` | `limit`, `offset`, `uuids`, `urls`, `minPendingAt`, `maxPendingAt`, field selection. `uuids` split into batches of 100 (open question 6) and merged in input order. Accepts both the documented bare array and the live API's `{ items, total, pageRequest }` page. |
+| `tasks.iterate(scraper, query)` | `GET /scraping-tasks/{scraper}` (paged) | Async iterator; advances `offset` by `limit` (default 20) until a short page; never yields a UUID twice. |
 | `tasks.count(scraper, query?)` | `GET /scraping-tasks/{scraper}/count` | `statuses`, `minPendingAt` → `{ country, status, count }[]`. |
 | `tasks.cancel(scraper, { uuids?, countries? })` | `POST /scraping-tasks/{scraper}/cancel` | Returns cancelled UUIDs (incl. sub-tasks) and countries. |
 | `tasks.waitForResults(scraper, uuids, opts?)` | repeated `tasks.read` | See [polling](#polling). |
@@ -40,7 +40,7 @@ All paths are relative to `baseUrl` and send `Authorization: Bearer <token>`.
 | `proxies.validate(urls)` | `POST /proxy-validate` | Consumes a little proxy traffic; documented on the method. |
 | `proxies.read()` | `GET /proxy-configs` | |
 | `proxies.update(configs)` | `PUT /proxy-configs` | Replaces the whole configuration; all-or-nothing server side. |
-| `proxyUrl.check(template)` | local | Parses `${rand(...)}` and `${country(...)}` placeholders and reports syntax errors before a network call. |
+| `proxyUrl.check(template)` / `checkProxyUrl` | local | Checks the scheme (http, https, socks4, socks5, socks5h) and `${rand(...)}` / `${country(...)}` syntax; returns the placeholders, or the offset and reason of the first error. |
 
 ### Types
 
@@ -98,4 +98,4 @@ All extend `ChartedSeaError` with `status?`, `requestId?`, `endpoint`, `details?
 
 ## Open questions
 
-Tracked in the [project index](../../README.md#open-questions-for-charted-sea). The ones that change code here: 1 (async response shape: the `run` return type is provisional), 3 (scraper names), 4 (REPLACED), 5 (error bodies, 429), 6 (batch size).
+Tracked in the [project index](../../README.md#open-questions-for-charted-sea). The ones that change code here: 3 (scraper names), 4 (REPLACED), 5 (error bodies, 429), 6 (batch size). Question 1 was answered by the live smoke test on 2026-11-22, which also found that Read returns a page object; both are reflected above and in the fixtures.

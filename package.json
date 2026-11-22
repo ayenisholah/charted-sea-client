@@ -63,7 +63,9 @@
     "check:package": "npm run build && publint && attw --pack . && size-limit",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run check:deps && npm run check:dupes && npm run check:unused && npm run check:no-deps && npm run check:fixtures && npm run test:coverage && npm run check:package",
     "docs": "typedoc --out docs-site src/index.ts",
-    "check:fixtures": "node scripts/hash-fixtures.mjs"
+    "check:fixtures": "node scripts/hash-fixtures.mjs",
+    "example": "tsx",
+    "test:mutation": "stryker run"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
@@ -72,6 +74,8 @@
     "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^10.0.1",
     "@size-limit/preset-small-lib": "^14.3.0",
+    "@stryker-mutator/core": "^10.1.1",
+    "@stryker-mutator/vitest-runner": "^10.1.1",
     "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^4.1.12",
     "dependency-cruiser": "^17.4.3",
@@ -84,6 +88,7 @@
     "publint": "^0.3.25",
     "size-limit": "^14.3.0",
     "tsup": "^9.0.0",
+    "tsx": "^4.23.15",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.73.0",
