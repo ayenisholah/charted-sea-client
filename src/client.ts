@@ -1,6 +1,9 @@
 import { type ClientOptions, resolveConfig } from "./config.js";
 import { createTransport } from "./http/transport.js";
 import { waitForResults, type WaitOptions } from "./polling/wait.js";
+import { checkProxyUrl, type ProxyUrlCheck } from "./proxy-url/parse.js";
+import { createHealth, type HealthResource } from "./resources/health.js";
+import { createProxies, type ProxiesResource } from "./resources/proxies.js";
 import { createTasks, type TasksResource } from "./resources/tasks.js";
 import { sleep } from "./timers.js";
 import type { Scraper, Task } from "./types.js";
@@ -22,6 +25,10 @@ export interface Tasks extends TasksResource {
 
 export interface ChartedSeaClient {
   readonly tasks: Tasks;
+  readonly health: HealthResource;
+  readonly proxies: ProxiesResource;
+  /** Local proxy URL checks; no network call. */
+  readonly proxyUrl: { check(template: string): ProxyUrlCheck };
 }
 
 /** Test seams. Not part of the public API. */
@@ -67,5 +74,10 @@ export function createClient(
     waitForResults: (scraper, uuids, waitOptions) =>
       waitForResults({ ...deps, reader: resource }, scraper, uuids, waitOptions),
   };
-  return { tasks };
+  return {
+    tasks,
+    health: createHealth(transport, deps.now),
+    proxies: createProxies(transport),
+    proxyUrl: { check: checkProxyUrl },
+  };
 }

@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { decodeAs, decodeCancel, decodeCounts, decodeTask, decodeTasks } from "../src/decode.js";
+import {
+  decodeAs,
+  decodeCancel,
+  decodeCounts,
+  decodeProxyConfigs,
+  decodeProxyValidations,
+  decodeSessionMetrics,
+  decodeTask,
+  decodeTasks,
+} from "../src/decode.js";
 import { ResponseError } from "../src/errors.js";
 
 describe("decoders", () => {
@@ -30,6 +39,51 @@ describe("decoders", () => {
     ["count not a number", decodeCounts, [{ country: "ID", status: "S", count: "1" }]],
     ["uuid not a string", decodeCancel, { uuids: [1] }],
   ])("reject a wrong shape (%s) as ResponseError", (_label, decoder, raw) => {
+    expect(() => decodeAs(decoder as (r: unknown) => unknown, "GET /x")(raw)).toThrow(
+      ResponseError,
+    );
+  });
+
+  it("NFR-7: health and proxy decoders default omitted optional lists", () => {
+    const report = decodeSessionMetrics({
+      startAtIncl: "a",
+      endAtExcl: "b",
+      granularity: "TOTAL",
+      periods: [],
+    });
+    expect([report.scrapers, report.countries]).toEqual([[], []]);
+    expect(decodeProxyValidations([{ url: "u" }])).toEqual([
+      { url: "u", tests: [], compatibilities: [] },
+    ]);
+    expect(
+      decodeProxyValidations([
+        { url: "u", compatibilities: [{ scraper: "S", compatible: true }] },
+      ])[0]?.compatibilities[0]?.description,
+    ).toBe("");
+  });
+
+  it.each([
+    [
+      "test.success not a boolean",
+      decodeProxyValidations,
+      [{ url: "u", tests: [{ type: "http", success: "yes" }] }],
+    ],
+    [
+      "metric without scraper",
+      decodeSessionMetrics,
+      {
+        startAtIncl: "a",
+        endAtExcl: "b",
+        granularity: "T",
+        periods: [{ startAtIncl: "a", endAtExcl: "b", metrics: [{ country: "SG" }] }],
+      },
+    ],
+    [
+      "setting urls not strings",
+      decodeProxyConfigs,
+      [{ scraper: "S", proxySettings: [{ type: "R", urls: [1] }] }],
+    ],
+  ])("reject %s", (_label, decoder, raw) => {
     expect(() => decodeAs(decoder as (r: unknown) => unknown, "GET /x")(raw)).toThrow(
       ResponseError,
     );
