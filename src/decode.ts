@@ -1,5 +1,14 @@
 import { ResponseError } from "./errors.js";
-import type { CancelResult, Task, TaskCount } from "./types.js";
+import type {
+  CancelResult,
+  HealthReport,
+  ProxyConfig,
+  ProxyValidation,
+  SessionMetric,
+  Task,
+  TaskCount,
+  TaskMetric,
+} from "./types.js";
 
 type Json = Record<string, unknown>;
 
@@ -63,6 +72,13 @@ export const decodeTask: Decoder<Task> = (raw) => {
 
 export const decodeTasks: Decoder<Task[]> = (raw) => array(raw, "tasks").map(decodeTask);
 
+/**
+ * Read Scraping Tasks. The docs show a bare array; the live API (2026-11-22) returns a page
+ * object `{ items, total, pageRequest }`. Both are accepted.
+ */
+export const decodeTaskPage: Decoder<Task[]> = (raw) =>
+  Array.isArray(raw) ? decodeTasks(raw) : decodeTasks(object(raw, "task page")["items"]);
+
 export const decodeCounts: Decoder<TaskCount[]> = (raw) =>
   array(raw, "counts").map((row) => {
     const o = object(row, "count");
@@ -82,3 +98,65 @@ export const decodeCancel: Decoder<CancelResult> = (raw) => {
     countries: strings(o["countries"] ?? [], "countries"),
   };
 };
+
+function boolean(v: unknown, what: string): boolean {
+  return typeof v === "boolean" ? v : fail(`${what} is not a boolean`);
+}
+
+function objects(v: unknown, what: string): Json[] {
+  return array(v, what).map((o, i) => object(o, `${what}[${String(i)}]`));
+}
+
+/** Health rows keep every field; only the keys used for grouping are checked. */
+function healthReport<M>(raw: unknown): HealthReport<M> {
+  const o = object(raw, "health report");
+  return {
+    ...o,
+    startAtIncl: string(o["startAtIncl"], "startAtIncl"),
+    endAtExcl: string(o["endAtExcl"], "endAtExcl"),
+    granularity: string(o["granularity"], "granularity"),
+    scrapers: strings(o["scrapers"] ?? [], "scrapers"),
+    countries: strings(o["countries"] ?? [], "countries"),
+    periods: objects(o["periods"], "periods").map((p) => ({
+      ...p,
+      startAtIncl: string(p["startAtIncl"], "period.startAtIncl"),
+      endAtExcl: string(p["endAtExcl"], "period.endAtExcl"),
+      metrics: objects(p["metrics"], "period.metrics").map((m) => {
+        string(m["scraper"], "metric.scraper");
+        string(m["country"], "metric.country");
+        return m as M;
+      }),
+    })),
+  };
+}
+
+export const decodeSessionMetrics: Decoder<HealthReport<SessionMetric>> = healthReport;
+export const decodeTaskMetrics: Decoder<HealthReport<TaskMetric>> = healthReport;
+
+export const decodeProxyValidations: Decoder<ProxyValidation[]> = (raw) =>
+  objects(raw, "validations").map((v) => ({
+    ...v,
+    url: string(v["url"], "validation.url"),
+    tests: objects(v["tests"] ?? [], "validation.tests").map((t) => ({
+      ...t,
+      type: string(t["type"], "test.type"),
+      success: boolean(t["success"], "test.success"),
+    })),
+    compatibilities: objects(v["compatibilities"] ?? [], "validation.compatibilities").map((c) => ({
+      ...c,
+      scraper: string(c["scraper"], "compatibility.scraper"),
+      description: string(c["description"] ?? "", "compatibility.description"),
+      compatible: boolean(c["compatible"], "compatibility.compatible"),
+    })),
+  }));
+
+export const decodeProxyConfigs: Decoder<ProxyConfig[]> = (raw) =>
+  objects(raw, "proxy configs").map((c) => ({
+    ...c,
+    scraper: string(c["scraper"], "config.scraper"),
+    proxySettings: objects(c["proxySettings"], "config.proxySettings").map((s) => ({
+      ...s,
+      type: string(s["type"], "setting.type"),
+      urls: strings(s["urls"], "setting.urls"),
+    })),
+  }));

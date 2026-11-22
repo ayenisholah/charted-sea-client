@@ -20,6 +20,16 @@ export { REDACTED, redact } from "./http/redact.js";
 export type { RetryPolicy } from "./http/retry.js";
 export { isKnownStatus, isTerminalStatus, TASK_STATUSES } from "./polling/status.js";
 export type { WaitOptions, WaitProgress } from "./polling/wait.js";
+export { checkProxyUrl } from "./proxy-url/parse.js";
+export type { Placeholder, PlaceholderValue, ProxyUrlCheck } from "./proxy-url/parse.js";
+export type { HealthQuery, HealthResource, TaskMetricsQuery } from "./resources/health.js";
+export type { ProxiesResource } from "./resources/proxies.js";
 export { UUID_BATCH_SIZE } from "./resources/tasks.js";
-export type { CancelQuery, CountQuery, ReadQuery, RunOptions } from "./resources/tasks.js";
+export type {
+  CancelQuery,
+  CountQuery,
+  ReadQuery,
+  RunOptions,
+  TasksResource,
+} from "./resources/tasks.js";
 export type * from "./types.js";

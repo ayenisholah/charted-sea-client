@@ -6,3 +6,5 @@ package-lock.json
 CHANGELOG.md
 .changeset/*.md
 *.md
+reports
+.stryker-tmp

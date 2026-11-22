@@ -18,6 +18,7 @@ export type FixtureName =
   | "run-scraper-params"
   | "run-single-sync"
   | "read-tasks"
+  | "read-tasks-live"
   | "count-tasks"
   | "cancel-tasks"
   | "health-session-metrics"

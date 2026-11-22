@@ -9,7 +9,7 @@ Each requirement has a test. The ID goes in the test name, so `grep FR-3` finds 
 - **FR-3** `waitForResults` returns one task per input UUID, in input order, once every task is terminal.
 - **FR-4** `waitForResults` stops at `maxWaitMs` with `WaitTimeoutError` carrying partial results, and stops immediately on `AbortSignal`.
 - **FR-5** UUID lists longer than the batch size are split, and every UUID is requested exactly once per poll.
-- **FR-6** `tasks.iterate` yields every task across pages exactly once.
+- **FR-6** `tasks.iterate` yields every task across pages, and never the same task twice (with a fixed `maxPendingAt` the set is stable).
 - **FR-7** Health queries reject ranges over 7 days and unknown granularities before any request.
 - **FR-8** `proxyUrl.check` accepts every example URL in the API reference and reports position and reason for malformed placeholders.
 - **FR-9** Scraper-specific parameters (`productSearch_*`) pass through to the run body unchanged.

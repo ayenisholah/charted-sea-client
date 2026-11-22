@@ -2,19 +2,19 @@
 
 Each milestone has a check that proves it's done. Estimates assume focused days.
 
-## M0: Scaffold and CI (0.5 day)
+## M0: Scaffold and CI (0.5 day) ✅ done
 
 Repo, tooling (TypeScript strict, ESLint, Prettier, Vitest, tsup, knip, jscpd, dependency-cruiser, commitlint, changesets), all workflows, branch protection.
 
 **Done when:** a trivial `redact` module with tests is merged through a PR, every CI job is green, and a planted violation (unused export, duplicate block, 99% coverage) fails the gate.
 
-## M1: Core tasks (1.5 days)
+## M1: Core tasks (1.5 days) ✅ done, released as 0.1.0
 
 `createClient`, transport, errors, redaction, retry policy, `tasks.run/runSingle/read/count/cancel`, `waitForResults`, UUID batching.
 
 **Done when:** FR-1 to FR-5 and NFR-1 to NFR-4 have passing tests at 100% coverage, and the quick start in the README runs against the mock server in an example test. *Make the repo public and send Marc the link at this point.*
 
-## M2: Full surface and docs (1 day)
+## M2: Full surface and docs (1 day) 🔧 in progress (0.2.0)
 
 `tasks.iterate`, `health.*`, `proxies.*`, `proxyUrl.check`, TypeDoc site, `examples/` (search → CSV; check health before a batch; cancel by country), Stryker weekly job, first live smoke run.
 

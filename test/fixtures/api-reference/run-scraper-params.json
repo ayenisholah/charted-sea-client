@@ -1,7 +1,6 @@
 {
   "$reference": "https://chartedsea.com/docs/api-reference",
-  "$source": "Run Scraping Tasks: scraper-specific parameters example",
-  "$provisional": "Open question 1: response shape for waitForCompletion=false assumed, as in run-async.",
+  "$source": "Run Scraping Tasks: scraper-specific parameters example Async response shape confirmed live on 2026-11-22.",
   "request": {
     "method": "POST",
     "path": "/scraping-tasks/shopee/run",
