@@ -1,5 +1,11 @@
 # charted-sea-client
 
+## 0.3.0
+
+### Minor Changes
+
+- ae4e58d: **Requires Node 22 or newer.** Node 20 reached end of life in April 2026; the test toolchain (Vitest 5) no longer supports it. No API changes.
+
 ## 0.2.1
 
 ### Patch Changes
