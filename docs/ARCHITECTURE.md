@@ -1,6 +1,6 @@
 # Architecture
 
-Planned. This describes the 0.1.0 design.
+Built (0.2.0). Every module below exists and is covered by tests at 100% per file.
 
 ## Modules
 
@@ -23,6 +23,8 @@ src/
     batch.ts          UUID chunking and order-preserving merge (pure)
   proxy-url/
     parse.ts          ${rand(...)} / ${country(...)} placeholder parser (pure)
+  decode.ts           lenient response decoders (keep unknown fields; accept both read shapes)
+  timers.ts           abortable sleep
   errors.ts           ChartedSeaError hierarchy
   types.ts            API types
 ```
