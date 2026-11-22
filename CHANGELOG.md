@@ -1,5 +1,11 @@
 # charted-sea-client
 
+## 0.2.1
+
+### Patch Changes
+
+- 84a49a1: Redact URL credentials even when the scheme follows a digit or symbol (e.g. `1http://user:pass@host`).
+
 ## 0.2.0
 
 ### Minor Changes
