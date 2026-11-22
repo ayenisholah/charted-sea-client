@@ -3,7 +3,8 @@ export const REDACTED = "***";
 
 const BEARER = /\b(bearer)\s+[^\s"',;]+/gi;
 // scheme://userinfo@ — userinfo may contain placeholders and %-escapes but never "/", "@" or spaces.
-const URL_USERINFO = /\b([a-z][a-z0-9+.-]*:\/\/)[^\s/@]+@/gi;
+// No \b anchor: "1http://u:p@h" must still be redacted (the scheme starts at the first letter).
+const URL_USERINFO = /([a-z][a-z0-9+.-]*:\/\/)[^\s/@]+@/gi;
 
 function replaceAll(text: string, needle: string): string {
   return text.split(needle).join(REDACTED);
