@@ -42,6 +42,11 @@ describe("redact", () => {
     expect(redact(text)).toBe(text);
   });
 
+  it("NFR-1: redacts userinfo even when the scheme follows a digit or symbol", () => {
+    expect(redact("see 1http://user:pass@h")).toBe(`see 1http://${REDACTED}@h`);
+    expect(redact("(socks5://u:p@h)")).toBe(`(socks5://${REDACTED}@h)`);
+  });
+
   it("redacts several URLs in one string", () => {
     expect(redact("a http://u:p@h1 b socks5://x:y@h2")).toBe(
       `a http://${REDACTED}@h1 b socks5://${REDACTED}@h2`,
