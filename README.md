@@ -25,7 +25,7 @@ Charted Sea scrapes marketplace pages for you: you send URLs, it returns the raw
 npm install charted-sea-client
 ```
 
-- Node 20 or newer (or Bun or Deno). ESM and CommonJS. Full TypeScript types.
+- Node 22 or newer (or Bun or Deno). ESM and CommonJS. Full TypeScript types.
 - **Zero runtime dependencies.** Published with [npm provenance](https://docs.npmjs.com/generating-provenance-statements), so every version links to the commit and workflow that built it.
 
 You need an API token: log in to the [Charted Sea console](https://console.chartedsea.com), then choose **Get API Token → Generate Token**. Tokens are valid for 365 days.
@@ -176,7 +176,7 @@ CHARTED_SEA_TOKEN=... npm run example -- examples/health-gated-batch.ts
 
 ## How it's tested
 
-- **170 tests at 100% coverage per file**, gated in CI on Node 20, 22 and 24.
+- **171 tests at 100% coverage per file**, gated in CI on Node 22 and 24.
 - Every request is checked against the examples in Charted Sea's API reference, using a mock server that fails on anything the docs don't describe.
 - Property tests cover backoff, batching, redaction and the proxy URL parser. Mutation testing runs weekly.
 - A live smoke test against the real API runs by hand.

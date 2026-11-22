@@ -1,6 +1,6 @@
 # charted-sea-client agent instructions
 
-Unofficial TypeScript client for the Charted Sea scraping API. Zero runtime dependencies, Node 20+. Read the linked docs before changing what they cover.
+Unofficial TypeScript client for the Charted Sea scraping API. Zero runtime dependencies, Node 22+. Read the linked docs before changing what they cover.
 
 ## Commands
 

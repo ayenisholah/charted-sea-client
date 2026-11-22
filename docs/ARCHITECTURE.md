@@ -66,4 +66,4 @@ sequenceDiagram
 - **Time and randomness** are injected (`now`, `sleep`, `random`) so polling and backoff are deterministic in tests.
 - **Redaction** happens in one place (`http/redact.ts`), before anything reaches an error, a log or `cause`.
 - **Forward compatibility:** unknown response fields are preserved; unknown statuses are non-terminal.
-- **Runtime:** only `fetch`, `AbortController`, `URL` and `setTimeout`, so it runs on Node 20+, Bun and Deno.
+- **Runtime:** only `fetch`, `AbortController`, `URL` and `setTimeout`, so it runs on Node 22+, Bun and Deno.
