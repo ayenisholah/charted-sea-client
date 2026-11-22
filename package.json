@@ -1,0 +1,82 @@
+{
+  "name": "charted-sea-client",
+  "version": "0.0.0",
+  "description": "Unofficial typed TypeScript client for the Charted Sea scraping API",
+  "license": "MIT",
+  "author": "Shola Ayeni",
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "charted-sea",
+    "scraping",
+    "shopee",
+    "lazada",
+    "sdk",
+    "client"
+  ],
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:live": "vitest run --config vitest.live.config.ts",
+    "build": "tsup",
+    "prepare": "tsup",
+    "check:deps": "depcruise src --config .dependency-cruiser.cjs",
+    "check:dupes": "jscpd src",
+    "check:unused": "knip",
+    "check:no-deps": "node scripts/assert-no-runtime-deps.mjs",
+    "check:package": "npm run build && publint && attw --pack . && size-limit",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run check:deps && npm run check:dupes && npm run check:unused && npm run check:no-deps && npm run test:coverage && npm run check:package",
+    "docs": "typedoc --out docs-site src/index.ts"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@changesets/cli": "^2.31.1",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@eslint/js": "^10.0.1",
+    "@size-limit/preset-small-lib": "^14.3.0",
+    "@types/node": "^20.19.43",
+    "@vitest/coverage-v8": "^4.1.12",
+    "dependency-cruiser": "^17.4.3",
+    "eslint": "^10.15.0",
+    "fast-check": "^4.11.0",
+    "jscpd": "^5.4.3",
+    "knip": "^6.47.0",
+    "prettier": "^3.10.1",
+    "publint": "^0.3.25",
+    "size-limit": "^14.3.0",
+    "tsup": "^9.0.0",
+    "typedoc": "^0.28.20",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0",
+    "vitest": "^4.1.12"
+  }
+}
