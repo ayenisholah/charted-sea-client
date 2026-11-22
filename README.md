@@ -3,9 +3,9 @@
 Typed TypeScript client for the [Charted Sea](https://chartedsea.com) scraping API. Submit scraping tasks, wait for results with polling and backoff, read health metrics, and validate proxies, in Node, Bun, Deno or any runtime with `fetch`.
 
 > **Unofficial.** Not affiliated with or endorsed by Charted Sea.
-> **Status: planned.** This README describes the 0.1.0 target. See the [roadmap](docs/ROADMAP.md).
+> **Status: 0.1.0.** The tasks API (run, read, count, cancel, waitForResults) is released. Health metrics, proxies and `tasks.iterate` are planned for 0.2.0; see the [roadmap](docs/ROADMAP.md).
 
-<!-- Badges go live at M0: CI · coverage · npm version · npm provenance · OpenSSF Scorecard · bundle size -->
+[![CI](https://github.com/ayenisholah/charted-sea-client/actions/workflows/ci.yml/badge.svg)](https://github.com/ayenisholah/charted-sea-client/actions/workflows/ci.yml) [![npm](https://img.shields.io/npm/v/charted-sea-client)](https://www.npmjs.com/package/charted-sea-client) [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ayenisholah/charted-sea-client/badge)](https://scorecard.dev/viewer/?uri=github.com/ayenisholah/charted-sea-client)
 
 ## Why
 
@@ -42,7 +42,7 @@ for (const task of results) {
 }
 ```
 
-Check platform health before a large batch:
+Check platform health before a large batch (planned for 0.2.0):
 
 ```ts
 const health = await cs.health.taskMetrics({
@@ -65,12 +65,12 @@ const health = await cs.health.taskMetrics({
 | [Release process](docs/RELEASE_PROCESS.md) | Versioning, changesets, provenance |
 | [Roadmap](docs/ROADMAP.md) | Milestones with "done when" checks |
 | [ADRs](docs/adr/) | Recorded decisions |
-| API reference | TypeDoc on GitHub Pages (planned, M2) |
+| [API reference](https://ayenisholah.github.io/charted-sea-client/) | TypeDoc, built from `main` |
 
 ## Related
 
-- [charted-sea-mcp](../charted-sea-mcp/README.md): MCP server built on this client.
-- [charted-sea-rs](../charted-sea-rs/README.md): the same client in Rust.
+- charted-sea-mcp (planned): MCP server built on this client.
+- charted-sea-rs (planned): the same client in Rust.
 
 ## Licence
 

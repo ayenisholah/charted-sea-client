@@ -1,9 +1,17 @@
 {
   "name": "charted-sea-client",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Unofficial typed TypeScript client for the Charted Sea scraping API",
   "license": "MIT",
   "author": "Shola Ayeni",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayenisholah/charted-sea-client.git"
+  },
+  "homepage": "https://github.com/ayenisholah/charted-sea-client#readme",
+  "bugs": {
+    "url": "https://github.com/ayenisholah/charted-sea-client/issues"
+  },
   "type": "module",
   "sideEffects": false,
   "engines": {
